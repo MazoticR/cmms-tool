@@ -15,13 +15,13 @@ export default function MaintenanceLogsTable({
   refreshData 
 }: MaintenanceLogsTableProps) {
   return (
-    <div className="overflow-x-auto">
+    <div className="table-container">
       <AddMaintenanceForm 
         machines={machines} 
         parts={parts} 
         onAdd={refreshData} 
       />
-      <table className="min-w-full bg-white border">
+      <table className="w-full">
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 border">Machine</th>

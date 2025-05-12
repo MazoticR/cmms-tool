@@ -8,9 +8,9 @@ interface MachinesTableProps {
 
 export default function MachinesTable({ machines, refreshData }: MachinesTableProps) {
   return (
-    <div className="overflow-x-auto">
+    <div className="table-container">
       <AddMachineForm onAdd={refreshData} />
-      <table className="min-w-full bg-white border">
+      <table className="w-full">
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 border">Machine Name</th>

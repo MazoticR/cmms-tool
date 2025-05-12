@@ -8,9 +8,9 @@ interface PartsTableProps {
 
 export default function PartsTable({ parts, refreshData }: PartsTableProps) {
   return (
-    <div className="overflow-x-auto">
+    <div className="table-container">
       <AddPartForm onAdd={refreshData} />
-      <table className="min-w-full bg-white border">
+      <table className="w-full">
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 border">Part Name</th>
