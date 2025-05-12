@@ -1,6 +1,11 @@
+// components/MaintenanceLogsTable.tsx
 import { MaintenanceLog } from '../types';
 
-export default function MaintenanceLogsTable({ logs }: { logs: MaintenanceLog[] }) {
+interface MaintenanceLogsTableProps {
+  logs: MaintenanceLog[] | undefined; // Allow undefined
+}
+
+export default function MaintenanceLogsTable({ logs }: MaintenanceLogsTableProps) {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border">
@@ -14,15 +19,27 @@ export default function MaintenanceLogsTable({ logs }: { logs: MaintenanceLog[] 
           </tr>
         </thead>
         <tbody>
-          {logs.map(log => (
-            <tr key={log.id} className="hover:bg-gray-50">
-              <td className="px-4 py-2 border">{log.Machine?.[0] || 'N/A'}</td>
-              <td className="px-4 py-2 border">{log.PartUsed?.[0] || 'N/A'}</td>
-              <td className="px-4 py-2 border">{new Date(log.Date).toLocaleDateString()}</td>
-              <td className="px-4 py-2 border">${log.Cost?.toFixed(2)}</td>
-              <td className="px-4 py-2 border">{log.Technician}</td>
+          {logs && logs.length > 0 ? (
+            logs.map(log => (
+              <tr key={log.id} className="hover:bg-gray-50">
+                <td className="px-4 py-2 border">{log.Machine?.[0] || 'N/A'}</td>
+                <td className="px-4 py-2 border">{log.PartUsed?.[0] || 'N/A'}</td>
+                <td className="px-4 py-2 border">
+                  {log.Date ? new Date(log.Date).toLocaleDateString() : 'N/A'}
+                </td>
+                <td className="px-4 py-2 border">
+                  {log.Cost ? `$${log.Cost.toFixed(2)}` : 'N/A'}
+                </td>
+                <td className="px-4 py-2 border">{log.Technician || 'N/A'}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={5} className="px-4 py-2 border text-center text-gray-500">
+                {logs ? 'No maintenance logs found' : 'Loading logs...'}
+              </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>
