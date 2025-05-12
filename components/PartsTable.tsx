@@ -8,36 +8,38 @@ interface PartsTableProps {
 
 export default function PartsTable({ parts, refreshData }: PartsTableProps) {
   return (
-    <div className="table-container">
+    <div className="space-y-4">
       <AddPartForm onAdd={refreshData} />
-      <table className="w-full">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="px-4 py-2 border">Part Name</th>
-            <th className="px-4 py-2 border">Quantity</th>
-            <th className="px-4 py-2 border">Price</th>
-            <th className="px-4 py-2 border">Supplier</th>
-          </tr>
-        </thead>
-        <tbody>
-          {parts && parts.length > 0 ? (
-            parts.map(part => (
-              <tr key={part.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border">{part.Name}</td>
-                <td className="px-4 py-2 border">{part.Quantity}</td>
-                <td className="px-4 py-2 border">${part.Price?.toFixed(2)}</td>
-                <td className="px-4 py-2 border">{part.Supplier || 'N/A'}</td>
-              </tr>
-            ))
-          ) : (
+      <div className="table-container">
+        <table>
+          <thead>
             <tr>
-              <td colSpan={4} className="px-4 py-2 border text-center text-gray-500">
-                No parts found
-              </td>
+              <th>Part Name</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Supplier</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {parts && parts.length > 0 ? (
+              parts.map(part => (
+                <tr key={part.id}>
+                  <td>{part.Name}</td>
+                  <td>{part.Quantity}</td>
+                  <td>${part.Price?.toFixed(2)}</td>
+                  <td>{part.Supplier || 'N/A'}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="text-center py-4 text-muted-foreground">
+                  No parts found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
