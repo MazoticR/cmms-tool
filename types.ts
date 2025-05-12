@@ -1,4 +1,11 @@
 // types.ts
+
+// types.ts
+export type ApiSuccessResponse = {
+  success: true;
+  id?: string; // Optional for newly created records
+};
+
 export type Part = {
   id: string;
   Name: string;
