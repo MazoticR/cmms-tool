@@ -1,13 +1,9 @@
 import { Part } from '../types';
 
-interface PartsTableProps {
-  parts: Part[];
-}
-
-export default function PartsTable({ parts }: PartsTableProps) {
+export default function PartsTable({ parts }: { parts: Part[] }) {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full bg-white">
+      <table className="min-w-full bg-white border">
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 border">Part Name</th>
@@ -17,12 +13,12 @@ export default function PartsTable({ parts }: PartsTableProps) {
           </tr>
         </thead>
         <tbody>
-          {parts.map((part) => (
+          {parts.map(part => (
             <tr key={part.id} className="hover:bg-gray-50">
               <td className="px-4 py-2 border">{part.Name}</td>
               <td className="px-4 py-2 border">{part.Quantity}</td>
               <td className="px-4 py-2 border">${part.Price?.toFixed(2)}</td>
-              <td className="px-4 py-2 border">{part.Supplier}</td>
+              <td className="px-4 py-2 border">{part.Supplier || 'N/A'}</td>
             </tr>
           ))}
         </tbody>

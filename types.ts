@@ -1,3 +1,4 @@
+// types.ts
 export type Part = {
   id: string;
   Name: string;
@@ -11,4 +12,13 @@ export type Machine = {
   Name: string;
   Location: string;
   Status: string;
+};
+
+export type MaintenanceLog = {
+  id: string;
+  Machine: string[];
+  PartUsed: string[];
+  Date: string;
+  Cost: number;
+  Technician: string;
 };

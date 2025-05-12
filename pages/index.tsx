@@ -1,71 +1,59 @@
 import { useState, useEffect } from 'react';
 import PartsTable from '../components/PartsTable';
-import MachineView from '../components/MachineView';
-
-type Part = {
-  id: string;
-  Name: string;
-  Quantity: number;
-  Price: number;
-  Supplier?: string;
-};
-
-type Machine = {
-  id: string;
-  Name: string;
-  Location: string;
-  Status: string;
-};
+import MachinesTable from '../components/MachineTable';
+import MaintenanceLogsTable from '../components/MaintenanceLogsTable';
+import { Part, Machine, MaintenanceLog } from '../types';
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState<'parts' | 'machines' | 'logs'>('logs');
   const [parts, setParts] = useState<Part[]>([]);
   const [machines, setMachines] = useState<Machine[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [logs, setLogs] = useState<MaintenanceLog[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const [partsRes, machinesRes] = await Promise.all([
-          fetch('/api/parts'),
-          fetch('/api/machines')
-        ]);
-        
-        const partsData = await partsRes.json();
-        const machinesData = await machinesRes.json();
-        
-        setParts(partsData);
-        setMachines(machinesData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
+      const [partsRes, machinesRes, logsRes] = await Promise.all([
+        fetch('/api/parts'),
+        fetch('/api/machines'),
+        fetch('/api/maintenance')
+      ]);
+      setParts(await partsRes.json());
+      setMachines(await machinesRes.json());
+      setLogs(await logsRes.json());
     };
-
     fetchData();
   }, []);
 
-  if (loading) {
-    return <div className="p-4">Loading...</div>;
-  }
-
   return (
-    <div className="p-4">
+    <div className="p-4 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">CMMS Dashboard</h1>
       
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Machines</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {machines.map(machine => (
-            <MachineView key={machine.id} machine={machine} />
-          ))}
-        </div>
-      </section>
+      {/* Navigation Tabs */}
+      <div className="flex border-b mb-6">
+        <button
+          onClick={() => setActiveTab('parts')}
+          className={`px-4 py-2 ${activeTab === 'parts' ? 'border-b-2 border-blue-500' : ''}`}
+        >
+          Parts
+        </button>
+        <button
+          onClick={() => setActiveTab('machines')}
+          className={`px-4 py-2 ${activeTab === 'machines' ? 'border-b-2 border-blue-500' : ''}`}
+        >
+          Machines
+        </button>
+        <button
+          onClick={() => setActiveTab('logs')}
+          className={`px-4 py-2 ${activeTab === 'logs' ? 'border-b-2 border-blue-500' : ''}`}
+        >
+          Maintenance Logs
+        </button>
+      </div>
 
-      <section>
-        <h2 className="text-xl font-semibold mb-4">Parts Inventory</h2>
-        <PartsTable parts={parts} />
-      </section>
+      {/* Tab Content */}
+      {activeTab === 'parts' && <PartsTable parts={parts} />}
+      {activeTab === 'machines' && <MachinesTable machines={machines} />}
+      {activeTab === 'logs' && <MaintenanceLogsTable logs={logs} />}
     </div>
   );
 }
