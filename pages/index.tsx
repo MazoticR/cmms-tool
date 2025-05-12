@@ -9,9 +9,11 @@ export default function Home() {
   const [parts, setParts] = useState<Part[]>([]);
   const [machines, setMachines] = useState<Machine[]>([]);
   const [logs, setLogs] = useState<MaintenanceLog[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const refreshData = async () => {
+    try {
+      setLoading(true);
       const [partsRes, machinesRes, logsRes] = await Promise.all([
         fetch('/api/parts'),
         fetch('/api/machines'),
@@ -20,8 +22,15 @@ export default function Home() {
       setParts(await partsRes.json());
       setMachines(await machinesRes.json());
       setLogs(await logsRes.json());
-    };
-    fetchData();
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshData();
   }, []);
 
   return (
@@ -32,28 +41,58 @@ export default function Home() {
       <div className="flex border-b mb-6">
         <button
           onClick={() => setActiveTab('parts')}
-          className={`px-4 py-2 ${activeTab === 'parts' ? 'border-b-2 border-blue-500' : ''}`}
+          className={`px-4 py-2 ${activeTab === 'parts' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-600'}`}
         >
           Parts
         </button>
         <button
           onClick={() => setActiveTab('machines')}
-          className={`px-4 py-2 ${activeTab === 'machines' ? 'border-b-2 border-blue-500' : ''}`}
+          className={`px-4 py-2 ${activeTab === 'machines' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-600'}`}
         >
           Machines
         </button>
         <button
           onClick={() => setActiveTab('logs')}
-          className={`px-4 py-2 ${activeTab === 'logs' ? 'border-b-2 border-blue-500' : ''}`}
+          className={`px-4 py-2 ${activeTab === 'logs' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-600'}`}
         >
           Maintenance Logs
         </button>
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+      )}
+
       {/* Tab Content */}
-      {activeTab === 'parts' && <PartsTable parts={parts} />}
-      {activeTab === 'machines' && <MachinesTable machines={machines} />}
-      {activeTab === 'logs' && <MaintenanceLogsTable logs={logs} />}
+      {!loading && (
+        <>
+          {activeTab === 'parts' && (
+            <PartsTable 
+              parts={parts} 
+              refreshData={refreshData} 
+            />
+          )}
+          
+          {activeTab === 'machines' && (
+            <MachinesTable 
+              machines={machines} 
+              refreshData={refreshData} 
+            />
+          )}
+          
+          {activeTab === 'logs' && (
+            <MaintenanceLogsTable 
+              logs={logs} 
+              machines={machines} 
+              parts={parts} 
+              refreshData={refreshData} 
+            />
+          )}
+        </>
+      )}
     </div>
   );
 }

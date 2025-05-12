@@ -1,8 +1,15 @@
 import { Part } from '../types';
+import AddPartForm from './AddPartForm';
 
-export default function PartsTable({ parts }: { parts: Part[] }) {
+interface PartsTableProps {
+  parts: Part[];
+  refreshData: () => void;
+}
+
+export default function PartsTable({ parts, refreshData }: PartsTableProps) {
   return (
     <div className="overflow-x-auto">
+      <AddPartForm onAdd={refreshData} />
       <table className="min-w-full bg-white border">
         <thead>
           <tr className="bg-gray-100">
@@ -34,4 +41,3 @@ export default function PartsTable({ parts }: { parts: Part[] }) {
     </div>
   );
 }
-

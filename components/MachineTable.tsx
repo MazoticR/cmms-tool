@@ -1,13 +1,15 @@
-// components/MachinesTable.tsx
 import { Machine } from '../types';
+import AddMachineForm from './AddMachineForm';
 
 interface MachinesTableProps {
-  machines: Machine[] | undefined; // Allow undefined
+  machines: Machine[] | undefined;
+  refreshData: () => void;
 }
 
-export default function MachinesTable({ machines }: MachinesTableProps) {
+export default function MachinesTable({ machines, refreshData }: MachinesTableProps) {
   return (
     <div className="overflow-x-auto">
+      <AddMachineForm onAdd={refreshData} />
       <table className="min-w-full bg-white border">
         <thead>
           <tr className="bg-gray-100">

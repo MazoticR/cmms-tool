@@ -1,13 +1,26 @@
-// components/MaintenanceLogsTable.tsx
-import { MaintenanceLog } from '../types';
+import { MaintenanceLog, Machine, Part } from '../types';
+import AddMaintenanceForm from './AddMaintenanceForm';
 
 interface MaintenanceLogsTableProps {
-  logs: MaintenanceLog[] | undefined; // Allow undefined
+  logs: MaintenanceLog[] | undefined;
+  machines: Machine[];
+  parts: Part[];
+  refreshData: () => void;
 }
 
-export default function MaintenanceLogsTable({ logs }: MaintenanceLogsTableProps) {
+export default function MaintenanceLogsTable({ 
+  logs, 
+  machines, 
+  parts, 
+  refreshData 
+}: MaintenanceLogsTableProps) {
   return (
     <div className="overflow-x-auto">
+      <AddMaintenanceForm 
+        machines={machines} 
+        parts={parts} 
+        onAdd={refreshData} 
+      />
       <table className="min-w-full bg-white border">
         <thead>
           <tr className="bg-gray-100">
