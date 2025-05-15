@@ -1,9 +1,7 @@
-import Airtable from 'airtable';
-import type { NextApiRequest, NextApiResponse } from 'next';
+// pages/api/machines.ts
+import { NextApiRequest, NextApiResponse } from 'next';
+import { supabase } from '../../utils/supabaseClient';
 import { Machine, ApiSuccessResponse } from '../../types';
-
-const base = new Airtable({ apiKey: process.env.NEXT_PUBLIC_AIRTABLE_KEY })
-  .base(process.env.NEXT_PUBLIC_AIRTABLE_BASE!);
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,22 +9,45 @@ export default async function handler(
 ) {
   try {
     if (req.method === 'GET') {
-      const records = await base('Machines').select().all();
-      const machines = records.map(record => ({
-        id: record.id,
-        ...record.fields,
-      })) as Machine[];
-      return res.status(200).json(machines);
+      // Handle GET all machines or single machine
+      if (req.query.id) {
+        const { data, error } = await supabase
+          .from('Machines')
+          .select('*')
+          .eq('id', req.query.id)
+          .single();
+
+        if (error) throw error;
+        return res.status(200).json(data);
+      } else {
+        const { data, error } = await supabase
+          .from('Machines')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        return res.status(200).json(data || []);
+      }
     }
 
     if (req.method === 'POST') {
       const { Name, Location, Status } = req.body;
-      const record = await base('Machines').create([{
-        fields: { Name, Location, Status: Status || 'Operational' }
-      }]);
+      
+      const { data, error } = await supabase
+        .from('Machines')
+        .insert([{ 
+          Name, 
+          Location, 
+          Status: Status || 'Operational' 
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
       return res.status(201).json({ 
         success: true,
-        id: record[0].id
+        id: data.id
       });
     }
 

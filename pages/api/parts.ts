@@ -1,9 +1,7 @@
-import Airtable from 'airtable';
-import type { NextApiRequest, NextApiResponse } from 'next';
+// pages/api/parts.ts
+import { NextApiRequest, NextApiResponse } from 'next';
+import { supabase } from '../../utils/supabaseClient';
 import { Part, ApiSuccessResponse } from '../../types';
-
-const base = new Airtable({ apiKey: process.env.NEXT_PUBLIC_AIRTABLE_KEY })
-  .base(process.env.NEXT_PUBLIC_AIRTABLE_BASE!);
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,22 +9,34 @@ export default async function handler(
 ) {
   try {
     if (req.method === 'GET') {
-      const records = await base('Parts').select().all();
-      const parts = records.map(record => ({
-        id: record.id,
-        ...record.fields,
-      })) as Part[];
-      return res.status(200).json(parts);
+      const { data, error } = await supabase
+        .from('Parts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return res.status(200).json(data || []);
     }
 
     if (req.method === 'POST') {
       const { Name, Quantity, Price, Supplier } = req.body;
-      const record = await base('Parts').create([{ 
-        fields: { Name, Quantity: Number(Quantity), Price: Number(Price), Supplier }
-      }]);
+      
+      const { data, error } = await supabase
+        .from('Parts')
+        .insert([{ 
+          Name, 
+          Quantity: Number(Quantity), 
+          Price: Number(Price), 
+          Supplier 
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
       return res.status(201).json({ 
         success: true,
-        id: record[0].id // Return the new record ID
+        id: data.id
       });
     }
 

@@ -1,9 +1,7 @@
-import Airtable from 'airtable';
-import type { NextApiRequest, NextApiResponse } from 'next';
+// pages/api/maintenance.ts
+import { NextApiRequest, NextApiResponse } from 'next';
+import { supabase } from '../../utils/supabaseClient';
 import { MaintenanceLog, ApiSuccessResponse } from '../../types';
-
-const base = new Airtable({ apiKey: process.env.NEXT_PUBLIC_AIRTABLE_KEY })
-  .base(process.env.NEXT_PUBLIC_AIRTABLE_BASE!);
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,30 +9,47 @@ export default async function handler(
 ) {
   try {
     if (req.method === 'GET') {
-      const records = await base('MaintenanceLogs').select({
-        sort: [{ field: 'Date', direction: 'desc' }]
-      }).all();
-      const logs = records.map(record => ({
-        id: record.id,
-        ...record.fields,
-      })) as MaintenanceLog[];
-      return res.status(200).json(logs);
+      const { data, error } = await supabase
+        .from('MaintenanceLogs')
+        .select(`
+          *,
+          Machines (Name),
+          Parts (Name)
+        `)
+        .order('Date', { ascending: false });
+
+      if (error) throw error;
+
+      // Transform data to match existing format
+      const transformedData = data.map(log => ({
+        ...log,
+        Machine: log.Machine ? [log.Machine.Name] : [],
+        PartUsed: log.Parts ? [log.Parts.Name] : []
+      }));
+
+      return res.status(200).json(transformedData || []);
     }
 
     if (req.method === 'POST') {
       const { Machine, PartUsed, Date, Cost, Technician } = req.body;
-      const record = await base('MaintenanceLogs').create([{
-        fields: {
-          Machine: [Machine],
-          PartUsed: [PartUsed],
-          Date,
-          Cost: Number(Cost),
-          Technician
-        }
-      }]);
+      
+      const { data, error } = await supabase
+        .from('MaintenanceLogs')
+        .insert([{ 
+          machine_id: Machine[0], 
+          part_id: PartUsed[0], 
+          Date, 
+          Cost: Number(Cost), 
+          Technician 
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
       return res.status(201).json({ 
         success: true,
-        id: record[0].id
+        id: data.id
       });
     }
 

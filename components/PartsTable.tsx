@@ -1,3 +1,4 @@
+// components/PartsTable.tsx (remains the same)
 import { Part } from '../types';
 import AddPartForm from './AddPartForm';
 

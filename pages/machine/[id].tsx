@@ -1,3 +1,4 @@
+// pages/machine/[id].tsx (remains the same)
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import PartsTable from '../../components/PartsTable';
@@ -23,7 +24,6 @@ export default function MachineDetail() {
   const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Create refresh function that can be passed to child components
   const refreshData = async () => {
     if (!id) return;
     

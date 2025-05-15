@@ -1,3 +1,4 @@
+// components/MachineTable.tsx (remains the same)
 import { Machine } from '../types';
 import AddMachineForm from './AddMachineForm';
 

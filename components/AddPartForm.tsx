@@ -1,4 +1,4 @@
-// components/AddPartForm.tsx
+// components/AddPartForm.tsx (remains the same)
 import { useState } from 'react';
 
 export default function AddPartForm({ onAdd }: { onAdd: () => void }) {

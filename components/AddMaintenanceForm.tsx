@@ -1,4 +1,4 @@
-// components/AddMaintenanceForm.tsx
+// components/AddMaintenanceForm.tsx (remains the same)
 import { useState } from 'react';
 import { Machine } from '../types';
 import { Part } from '../types';

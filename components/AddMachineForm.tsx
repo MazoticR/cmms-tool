@@ -1,4 +1,4 @@
-// components/AddMachineForm.tsx
+// components/AddMachineForm.tsx (remains the same)
 import { useState } from 'react';
 
 export default function AddMachineForm({ onAdd }: { onAdd: () => void }) {
