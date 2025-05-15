@@ -83,14 +83,12 @@ export default function Home() {
             />
           )}
           
-          {activeTab === 'logs' && (
-            <MaintenanceLogsTable 
-              logs={logs} 
-              machines={machines} 
-              parts={parts} 
-              refreshData={refreshData} 
-            />
-          )}
+            {activeTab === 'logs' && (
+              <MaintenanceLogsTable 
+                logs={logs} 
+                refreshData={refreshData} 
+              />
+            )}
         </>
       )}
     </div>
