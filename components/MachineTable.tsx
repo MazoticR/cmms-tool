@@ -24,15 +24,15 @@ export default function MachinesTable({ machines, refreshData }: MachinesTablePr
             {machines && machines.length > 0 ? (
               machines.map((machine) => (
                 <tr key={machine.id}>
-                  <td>{machine.Name}</td>
-                  <td>{machine.Location}</td>
+                  <td>{machine.name}</td>
+                  <td>{machine.location}</td>
                   <td>
                     <span className={`badge ${
-                      machine.Status === 'Operational' ? 'badge-operational' :
-                      machine.Status === 'Maintenance' ? 'badge-maintenance' :
+                      machine.status === 'Operational' ? 'badge-operational' :
+                      machine.status === 'Maintenance' ? 'badge-maintenance' :
                       'badge-retired'
                     }`}>
-                      {machine.Status}
+                      {machine.status}
                     </span>
                   </td>
                 </tr>

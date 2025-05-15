@@ -25,10 +25,10 @@ export default function PartsTable({ parts, refreshData }: PartsTableProps) {
             {parts && parts.length > 0 ? (
               parts.map(part => (
                 <tr key={part.id}>
-                  <td>{part.Name}</td>
-                  <td>{part.Quantity}</td>
-                  <td>${part.Price?.toFixed(2)}</td>
-                  <td>{part.Supplier || 'N/A'}</td>
+                  <td>{part.name}</td>
+                  <td>{part.quantity}</td>
+                  <td>${part.price?.toFixed(2)}</td>
+                  <td>{part.supplier || 'N/A'}</td>
                 </tr>
               ))
             ) : (
