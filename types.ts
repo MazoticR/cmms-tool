@@ -33,4 +33,5 @@ export type ApiSuccessResponse = {
   success: boolean;
   id?: number;
   error?: string;
+  name?: string;
 };
