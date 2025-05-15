@@ -1,33 +1,36 @@
 // types.ts
 export type Part = {
-  id: string;
-  Name: string;
-  Quantity: number;
-  Price: number;
-  Supplier?: string;
+  id: number;
+  name: string;
+  quantity: number;
+  price: number;
+  supplier?: string;
   created_at?: string;
 };
 
 export type Machine = {
-  id: string;
-  Name: string;
-  Location: string;
-  Status: string;
+  id: number;
+  name: string;
+  location: string;
+  status: string;
   created_at?: string;
 };
 
 export type MaintenanceLog = {
-  id: string;
-  Machine: string[] | string; // For Supabase, we'll use string (foreign key) instead of array
-  PartUsed: string[] | string; // Same here
-  Date: string;
-  Cost: number;
-  Technician: string;
+  id: number;
+  machine_id: number;
+  part_id: number;
+  date: string;
+  cost: number;
+  technician: string;
+  status: string;
   created_at?: string;
+  machine?: Machine;
+  part?: Part;
 };
 
 export type ApiSuccessResponse = {
   success: boolean;
-  id?: string;
+  id?: number;
   error?: string;
 };

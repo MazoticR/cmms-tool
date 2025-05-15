@@ -5,14 +5,14 @@ import { Machine, ApiSuccessResponse } from '../../types';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Machine[] | ApiSuccessResponse | { error: string }>
+  res: NextApiResponse<Machine[] | Machine | ApiSuccessResponse | { error: string }>
 ) {
   try {
     if (req.method === 'GET') {
-      // Handle GET all machines or single machine
       if (req.query.id) {
+        // Get single machine
         const { data, error } = await supabase
-          .from('Machines')
+          .from('machines')
           .select('*')
           .eq('id', req.query.id)
           .single();
@@ -20,8 +20,9 @@ export default async function handler(
         if (error) throw error;
         return res.status(200).json(data);
       } else {
+        // Get all machines
         const { data, error } = await supabase
-          .from('Machines')
+          .from('machines')
           .select('*')
           .order('created_at', { ascending: false });
 
@@ -31,14 +32,14 @@ export default async function handler(
     }
 
     if (req.method === 'POST') {
-      const { Name, Location, Status } = req.body;
+      const { name, location, status } = req.body;
       
       const { data, error } = await supabase
-        .from('Machines')
+        .from('machines')
         .insert([{ 
-          Name, 
-          Location, 
-          Status: Status || 'Operational' 
+          name, 
+          location, 
+          status: status || 'Operational' 
         }])
         .select()
         .single();

@@ -10,7 +10,7 @@ export default async function handler(
   try {
     if (req.method === 'GET') {
       const { data, error } = await supabase
-        .from('Parts')
+        .from('parts')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -19,15 +19,15 @@ export default async function handler(
     }
 
     if (req.method === 'POST') {
-      const { Name, Quantity, Price, Supplier } = req.body;
+      const { name, quantity, price, supplier } = req.body;
       
       const { data, error } = await supabase
-        .from('Parts')
+        .from('parts')
         .insert([{ 
-          Name, 
-          Quantity: Number(Quantity), 
-          Price: Number(Price), 
-          Supplier 
+          name, 
+          quantity: Number(quantity), 
+          price: Number(price), 
+          supplier 
         }])
         .select()
         .single();

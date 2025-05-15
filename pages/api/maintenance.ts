@@ -10,37 +10,38 @@ export default async function handler(
   try {
     if (req.method === 'GET') {
       const { data, error } = await supabase
-        .from('MaintenanceLogs')
+        .from('maintenance_logs')
         .select(`
           *,
-          Machines (Name),
-          Parts (Name)
+          machines:machine_id (name, location, status),
+          parts:part_id (name, price)
         `)
-        .order('Date', { ascending: false });
+        .order('date', { ascending: false });
 
       if (error) throw error;
 
-      // Transform data to match existing format
-      const transformedData = data.map(log => ({
+      // Transform the data to include machine and part details
+      const transformedData = (data as any[]).map(log => ({
         ...log,
-        Machine: log.Machine ? [log.Machine.Name] : [],
-        PartUsed: log.Parts ? [log.Parts.Name] : []
+        machine: log.machines,
+        part: log.parts
       }));
 
       return res.status(200).json(transformedData || []);
     }
 
     if (req.method === 'POST') {
-      const { Machine, PartUsed, Date, Cost, Technician } = req.body;
+      const { machine_id, part_id, date, cost, technician, status } = req.body;
       
       const { data, error } = await supabase
-        .from('MaintenanceLogs')
+        .from('maintenance_logs')
         .insert([{ 
-          machine_id: Machine[0], 
-          part_id: PartUsed[0], 
-          Date, 
-          Cost: Number(Cost), 
-          Technician 
+          machine_id: Number(machine_id),
+          part_id: Number(part_id),
+          date,
+          cost: Number(cost),
+          technician,
+          status: status || 'Pending'
         }])
         .select()
         .single();
