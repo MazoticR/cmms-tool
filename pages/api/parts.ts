@@ -6,9 +6,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Debug headers
-  console.log('Incoming headers:', req.headers);
-  
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -19,43 +16,29 @@ export default async function handler(
   }
 
   if (req.method === 'POST') {
-    console.log('Request body:', req.body); // Debug incoming data
-    
     try {
-      const { name, quantity, price, supplier } = req.body;
-      
-      // Test Supabase connection
-      const testQuery = await supabase
-        .from('parts')
-        .select('*')
-        .limit(1);
-        
-      console.log('Supabase test:', testQuery); // Debug Supabase
-
+      console.log('Connecting to Supabase...');
       const { data, error } = await supabase
         .from('parts')
-        .insert([{ 
-          name, 
-          quantity: Number(quantity), 
-          price: Number(price), 
-          supplier 
-        }])
-        .select()
-        .single();
+        .insert([req.body])
+        .select();
 
       if (error) {
-        console.error('Supabase error:', error);
+        console.error('Supabase Error Details:', {
+          message: error.message,
+          code: error.code,
+          details: error.details
+        });
         return res.status(500).json({ 
-          error: 'Database error',
-          details: error.message 
+          error: 'Database operation failed',
+          code: error.code,
+          hint: error.hint 
         });
       }
 
-      console.log('Insert successful:', data); // Debug success
-      return res.status(201).json({ success: true, id: data.id });
-
-    } catch (error) {
-      console.error('Server error:', error);
+      return res.status(201).json({ success: true, data });
+    } catch (err) {
+      console.error('Full Error Stack:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
   }
