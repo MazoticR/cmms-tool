@@ -1,21 +1,7 @@
-// pages/machine/[id].tsx (remains the same)
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import PartsTable from '../../components/PartsTable';
-
-type Machine = {
-  id: string;
-  Name: string;
-  Location: string;
-  Status: string;
-};
-
-type Part = {
-  id: string;
-  Name: string;
-  Quantity: number;
-  Price: number;
-};
+import { Part, Machine } from '../../types';
 
 export default function MachineDetail() {
   const router = useRouter();
@@ -77,19 +63,19 @@ export default function MachineDetail() {
       <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">{machine.Name}</h1>
+            <h1 className="text-2xl font-bold text-gray-800">{machine.name}</h1>
             <div className="mt-2">
               <p className="text-gray-600">
-                <span className="font-medium">Location:</span> {machine.Location}
+                <span className="font-medium">Location:</span> {machine.location}
               </p>
               <p className="text-gray-600 mt-1">
                 <span className="font-medium">Status:</span> 
                 <span className={`inline-block ml-2 px-3 py-1 rounded-full text-sm font-medium ${
-                  machine.Status === 'Operational' ? 'bg-green-100 text-green-800' :
-                  machine.Status === 'Maintenance' ? 'bg-yellow-100 text-yellow-800' :
+                  machine.status === 'Operational' ? 'bg-green-100 text-green-800' :
+                  machine.status === 'Maintenance' ? 'bg-yellow-100 text-yellow-800' :
                   'bg-red-100 text-red-800'
                 }`}>
-                  {machine.Status}
+                  {machine.status}
                 </span>
               </p>
             </div>
