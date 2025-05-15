@@ -1,4 +1,3 @@
-// pages/api/parts.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '../../utils/supabaseClient';
 import { Part, ApiSuccessResponse } from '../../types';
@@ -7,6 +6,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Part[] | ApiSuccessResponse | { error: string }>
 ) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   try {
     if (req.method === 'GET') {
       const { data, error } = await supabase
@@ -19,7 +27,7 @@ export default async function handler(
     }
 
     if (req.method === 'POST') {
-      const { name, quantity, price, supplier } = req.body;
+      const { name, quantity = 0, price = 0, supplier } = req.body;
       
       const { data, error } = await supabase
         .from('parts')
@@ -33,17 +41,13 @@ export default async function handler(
         .single();
 
       if (error) throw error;
-      
-      return res.status(201).json({ 
-        success: true,
-        id: data.id
-      });
+      return res.status(201).json({ success: true, id: data.id });
     }
 
-    res.setHeader('Allow', ['GET', 'POST']);
+    res.setHeader('Allow', ['GET', 'POST', 'OPTIONS']);
     return res.status(405).json({ error: `Method ${req.method} not allowed` });
   } catch (error) {
     console.error('Error:', error);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
